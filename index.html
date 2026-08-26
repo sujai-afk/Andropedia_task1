@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Password Strength Analyzer — Andropedia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow"><span class="dot"></span> ANDROPEDIA · SECURITY MODULE</div>
+    <h1>PASSWORD_STRENGTH_ANALYZER<span class="cursor"></span></h1>
+    <div class="sub">Everything runs locally in your browser. Nothing is stored or sent anywhere.</div>
+  </header>
+
+  <section class="panel">
+    <p class="panel-title">Input</p>
+    <div class="input-row">
+      <input id="pwInput" type="password" placeholder="Type a password to analyze..." autocomplete="off" spellcheck="false" />
+      <button class="icon-btn" id="toggleVis" title="Show/hide password">
+        <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+
+    <div id="emptyState" class="empty-state">Waiting for input...</div>
+
+    <div id="results" style="display:none;">
+      <div class="meter-row">
+        <span class="meter-label" id="strengthLabel">—</span>
+        <span class="meter-score" id="scoreLabel">0 / 100</span>
+      </div>
+      <div class="meter" id="meterBar">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+
+      <ul class="checklist" id="checklist"></ul>
+
+      <div class="suggestions">
+        <p class="panel-title" style="margin-bottom:8px;">Feedback</p>
+        <div id="suggestionsBody"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <p class="panel-title">Bonus Tools</p>
+    <div class="tabs">
+      <div class="tab active" data-tab="gen">Generator</div>
+      <div class="tab" data-tab="ent">Entropy</div>
+      <div class="tab" data-tab="crack">Crack-time</div>
+    </div>
+
+    <div class="tabpanel active" id="tab-gen">
+      <div class="row">
+        <label style="min-width:70px;">Length: <b id="lenVal" style="color:var(--amber)">16</b></label>
+        <input type="range" id="genLen" min="6" max="32" value="16" />
+      </div>
+      <div class="row">
+        <label><input type="checkbox" id="optUpper" checked> Uppercase</label>
+        <label><input type="checkbox" id="optLower" checked> Lowercase</label>
+        <label><input type="checkbox" id="optNum" checked> Numbers</label>
+        <label><input type="checkbox" id="optSpec" checked> Special</label>
+      </div>
+      <button class="btn" id="genBtn">Generate password</button>
+      <div class="gen-output">
+        <span id="genOut">—</span>
+        <button class="icon-btn" id="copyBtn" title="Copy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        </button>
+      </div>
+      <div class="assumptions" id="genNote"></div>
+    </div>
+
+    <div class="tabpanel" id="tab-ent">
+      <div class="stat-grid">
+        <div class="stat"><div class="k">Character pool</div><div class="v" id="entPool">0</div></div>
+        <div class="stat"><div class="k">Estimated entropy</div><div class="v" id="entBits">0 bits</div></div>
+      </div>
+      <div class="assumptions">Entropy is estimated as <b>length × log₂(pool size)</b>, where pool size is the sum of character sets detected in your password (lowercase 26, uppercase 26, digits 10, special ~32). This assumes a random password from that pool — real passwords with dictionary words or patterns are weaker than their entropy number suggests, which is why the score above also checks for patterns separately.</div>
+    </div>
+
+    <div class="tabpanel" id="tab-crack">
+      <div class="stat-grid">
+        <div class="stat"><div class="k">Offline attack (~10B/sec)</div><div class="v" id="crackOffline">—</div></div>
+        <div class="stat"><div class="k">Online attack (~100/sec)</div><div class="v" id="crackOnline">—</div></div>
+      </div>
+      <div class="assumptions">Assumptions: "offline" models an attacker who has stolen a password hash and brute-forces it locally on modern hardware (~10 billion guesses/sec). "Online" models an attacker guessing through a live login form with basic rate-limiting (~100 guesses/sec). Both assume the attacker has to try, on average, half of the total possible combinations (2^entropy ÷ 2) and doesn't already know the password is a common/dictionary word — if it is, real crack time is seconds, regardless of length.</div>
+    </div>
+  </section>
+
+  <footer>BUILT FOR <span>ANDROPEDIA</span> TECHNICAL RECRUITMENT · ROUND 1</footer>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
